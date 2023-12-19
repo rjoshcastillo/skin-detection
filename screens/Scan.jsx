@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
+  Text,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -22,6 +23,7 @@ export default function Scan({ navigation }) {
   const cameraRef = useRef(null);
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(false);
+  const [permission, setPermission] = useState(null);
 
   useEffect(() => {
     __startCamera();
@@ -29,10 +31,11 @@ export default function Scan({ navigation }) {
 
   const __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
-    if (status === "granted") {
-      // do something
-    } else {
+    setPermission(status);
+
+    if (status !== "granted") {
       Alert.alert("Access denied");
+      cameraRef.current.resumePreview();
     }
   };
 
@@ -40,7 +43,7 @@ export default function Scan({ navigation }) {
     return <Text>Requesting...</Text>;
   }
 
-  if (!permission.granted) {
+  if (permission !== "granted") {
     return <Text>Permission not granted</Text>;
   }
 
