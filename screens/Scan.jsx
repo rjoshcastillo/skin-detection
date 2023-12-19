@@ -23,29 +23,29 @@ export default function Scan({ navigation }) {
   const cameraRef = useRef(null);
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(false);
-  const [permission, setPermission] = useState(null);
+
 
   useEffect(() => {
-    __startCamera();
-  }, []);
+    const startCamera = async () => {
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        if (status === "granted" && isFocused) {
+          if (cameraRef.current) {
+            await cameraRef.current.resumePreview();
+          }
+        }
+      } catch (error) {
+        console.error("Error starting camera:", error);
+      }
+    };
+    startCamera();
 
-  const __startCamera = async () => {
-    const { status } = await Camera.requestCameraPermissionsAsync();
-    setPermission(status);
-
-    if (status !== "granted") {
-      Alert.alert("Access denied");
-      cameraRef.current.resumePreview();
-    }
-  };
-
-  if (!permission) {
-    return <Text>Requesting...</Text>;
-  }
-
-  if (permission !== "granted") {
-    return <Text>Permission not granted</Text>;
-  }
+    return () => {
+      if (cameraRef.current) {
+        cameraRef.current.pausePreview();
+      }
+    };
+  }, [isFocused]);
 
   let takePic = async (upload = false) => {
     if (upload) {
@@ -105,7 +105,7 @@ export default function Scan({ navigation }) {
 
   const readDiseaseMapping = async () => {
     try {
-      const filePath = `${FileSystem.documentDirectory}diseasesMetaData.json`;
+      const filePath = `${FileSystem.documentDirectory}diseaseMapping.json`;
 
       const fileContent = await FileSystem.readAsStringAsync(filePath, {
         encoding: FileSystem.EncodingType.UTF8,
