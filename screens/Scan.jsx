@@ -23,6 +23,27 @@ export default function Scan({ navigation }) {
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    __startCamera();
+  }, []);
+
+  const __startCamera = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    if (status === "granted") {
+      // do something
+    } else {
+      Alert.alert("Access denied");
+    }
+  };
+
+  if (!permission) {
+    return <Text>Requesting...</Text>;
+  }
+
+  if (!permission.granted) {
+    return <Text>Permission not granted</Text>;
+  }
+
   let takePic = async (upload = false) => {
     if (upload) {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -99,7 +120,7 @@ export default function Scan({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={{ height: '75%', width: '100%'}}>
+      <View style={{ height: "75%", width: "100%" }}>
         {isFocused && (
           <Camera
             style={styles.camera}
@@ -176,7 +197,7 @@ const styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: "#fff",
     backgroundColor: "transparent",
   },
   loading: {
