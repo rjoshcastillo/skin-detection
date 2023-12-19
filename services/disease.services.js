@@ -4,23 +4,13 @@ const BASE_URL = "http://192.168.0.102:3000/api";
 
 const DiseaseServices = {
   getDiseases: async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/get-diseases`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching items:", error);
-      throw error;
-    }
+    const response = await axios.get(`${BASE_URL}/get-diseases`);
+    return response.data;
   },
 
   getDiseaseByName: async (name) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/get-disease?name=${name}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching disease by name "${name}":`);
-      throw error;
-    }
+    const response = await axios.get(`${BASE_URL}/get-disease?name=${name}`);
+    return response.data;
   },
 };
 

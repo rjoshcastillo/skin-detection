@@ -36,7 +36,7 @@ export default function Result({ route, navigation }) {
         style={styles.iconleft}
         size={24}
         color="white"
-        onPress={() => navigation.navigate("Home")}
+        onPress={() => navigation.navigate("Scan")}
       />
       <ScrollView style={{ flex: 1 }}>
         <ShowInfo dInfo={res[0]} />
