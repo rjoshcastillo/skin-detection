@@ -76,31 +76,41 @@ export default function Scan({ navigation }) {
     const tensor = await convertBase64ToTensor(croppedData.base64);
 
     const prediction = await startPrediction(model, tensor);
+    const allPredictions = getTopNPredictions(prediction);
 
-    const highestPrediction = prediction.indexOf(
-      Math.max.apply(null, prediction)
-    );
-
+    console.log("Predictions:", prediction);
+    console.log("All Predictions", allPredictions);
     try {
       const diseaseMapping = await readDiseaseMapping();
+      let diseaseArray = [];
+      allPredictions.map((index) => diseaseArray.push(diseaseMapping[index]));
 
-      if (diseaseMapping) {
-        const diseaseName = diseaseMapping[highestPrediction];
-        const disease = await DiseaseServices.getDiseaseByName(diseaseName);
+      if (diseaseArray.length > 0) {
+        setLoading(false);
 
-        if (disease) {
-          setLoading(false);
-          navigation.navigate("Result", {
-            res: disease,
-            img: base64Image,
-          });
-        }
+        console.log("1st Result", diseaseArray[0].diseaseName);
+        console.log("2nd Result", diseaseArray[1].diseaseName);
+        console.log("3rd Result", diseaseArray[2].diseaseName);
+
+        navigation.navigate("Result", {
+          result: diseaseArray,
+          img: base64Image
+        });
       } else {
         setLoading(false);
       }
     } catch (error) {
       setLoading(false);
     }
+  };
+
+  const getTopNPredictions = (predictions) => {
+    const sortedIndices = predictions
+      .map((value, index) => index)
+      .sort((a, b) => predictions[b] - predictions[a])
+      .slice(0, 3);
+
+    return sortedIndices;
   };
 
   const readDiseaseMapping = async () => {

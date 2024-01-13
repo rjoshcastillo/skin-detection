@@ -7,12 +7,14 @@ import {
   Dimensions,
   ScrollView,
   Image,
+  TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 
+
 export default function Result({ route, navigation }) {
-  const { res, img } = route.params;
+  const { result, img } = route.params;
   const { height } = useWindowDimensions();
 
   useLayoutEffect(() => {
@@ -39,13 +41,14 @@ export default function Result({ route, navigation }) {
         onPress={() => navigation.navigate("Scan")}
       />
       <ScrollView style={{ flex: 1 }}>
-        <ShowInfo dInfo={res[0]} />
+        <ShowFirstResultInfo dInfo={result[0]} />
+        <ShowSimilaritiesResultInfo similar1={result[1]} similar2={result[2]} nav={navigation} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const ShowInfo = ({ dInfo }) => {
+const ShowFirstResultInfo = ({ dInfo }) => {
   return (
     <>
       <Text style={styles.title}>{dInfo.diseaseName}</Text>
@@ -106,6 +109,20 @@ const ShowInfo = ({ dInfo }) => {
   );
 };
 
+const ShowSimilaritiesResultInfo = ({ similar1, similar2, nav }) => {
+  return (
+    <>
+      <View style={{ marginBottom: 20, marginTop: 20 }}>
+        <Text style={{ textAlign: "center", fontSize: 24, color: "white" }}>
+          SIMILAR RESULTS
+        </Text>
+        <Text style={styles.title2}>{similar1.diseaseName}</Text>
+        <Text style={styles.title2}>{similar2.diseaseName}</Text>
+      </View>
+    </>
+  );
+};
+
 const w = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   container: {
@@ -127,6 +144,7 @@ const styles = StyleSheet.create({
     color: "white",
     textTransform: "uppercase",
     marginBottom: 10,
+    marginTop: 10,
     width: w,
     textAlign: "center",
   },

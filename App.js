@@ -16,10 +16,9 @@ export default function App() {
   const fetchData = async () => {
     try {
       const diseaseData = await DiseaseServices.getDiseases();
-      const diseaseNames = diseaseData?.map((item) => item.diseaseName);
-      console.log(diseaseData);
-      if (diseaseNames.length > 0) {
-        const jsonString = JSON.stringify(diseaseNames, null, 2);
+
+      if (diseaseData.length > 0) {
+        const jsonString = JSON.stringify(diseaseData, null, 2);
 
         const filePath = `${FileSystem.documentDirectory}diseaseMapping.json`;
         await FileSystem.writeAsStringAsync(filePath, jsonString, {
